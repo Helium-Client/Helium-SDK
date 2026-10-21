@@ -1,0 +1,10 @@
+/target/
+/build/
+/cmake-build-*/
+*.so
+*.dll
+*.dylib
+*.pdb
+*.obj
+*.o
+.DS_Store

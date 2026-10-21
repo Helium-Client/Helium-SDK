@@ -1,0 +1,14 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/helium-sdk",
+    "examples/rust-minimal",
+]
+
+[workspace.package]
+edition = "2021"
+license = "GPL-3.0-only"
+rust-version = "1.75"
+
+[workspace.lints.rust]
+unsafe_op_in_unsafe_fn = "deny"

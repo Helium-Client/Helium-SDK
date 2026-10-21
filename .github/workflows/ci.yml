@@ -1,0 +1,49 @@
+name: SDK CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  rust:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: Helium-SDK-v1-repo
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/Dinit
+          path: Dinit
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo fmt --all -- --check
+        working-directory: Helium-SDK-v1-repo
+      - run: cargo test --workspace
+        working-directory: Helium-SDK-v1-repo
+      - run: cargo build -p helium-example-rust-plugin --release
+        working-directory: Helium-SDK-v1-repo
+
+  native-abi:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: Helium-SDK-v1-repo
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/Dinit
+          path: Dinit
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+        working-directory: Helium-SDK-v1-repo
+      - run: cmake --build build --config Release
+        working-directory: Helium-SDK-v1-repo
+      - run: ctest --test-dir build -C Release --output-on-failure
+        working-directory: Helium-SDK-v1-repo
